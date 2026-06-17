@@ -5,13 +5,12 @@ namespace DnD_Helper_Backend.Interfaces
 {
     public interface IPersonajeRepository
     {
-        Task<List<PersonajeDto>> GetPersonajesAsync();  //Toda la Info
-        Task<List<PersonajeListDto>> GetPersonajesListAsync(); // Solo Nombres y XP
+        Task<List<PersonajeDto>> GetPersonajesAsync(); //VER TODOS PERSONAJES
+        Task<List<PersonajeListDto>> GetPersonajesListAsync(); // VER TODOS PERSONAJES, SOLO NOMBRE Y XP
+        Task<PersonajeDto?> GetPersonajeByIdAsync(int id); //VER INFO 1 SOLO PERSONAJE
         Task<Personaje> CreatePersonajeAsync(CreatePersonajeDto dto);
         Task<bool> UpdatePersonajeAsync(UpdatePersonajeDto dto);
         Task<bool> DeletePersonajeAsync(int id);
-
-        Task<Personaje> GetPersonajeById(int id);
 
     }
 }

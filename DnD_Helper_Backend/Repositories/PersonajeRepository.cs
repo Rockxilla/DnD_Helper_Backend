@@ -45,6 +45,7 @@ namespace DnD_Helper_Backend.Repositories
                 })
                 .ToListAsync();
         }
+        // VER PERSONAJES, LISTA CORTA
         public async Task<List<PersonajeListDto>> GetPersonajesListAsync()
         {
             return await _databaseContext.Personajes
@@ -55,6 +56,37 @@ namespace DnD_Helper_Backend.Repositories
                     Experiencia = x.Experiencia
                 })
                 .ToListAsync();
+        }
+        //VER 1 SOLO PERSONAJE
+        public async Task<PersonajeDto?> GetPersonajeByIdAsync(int id)
+        {
+            return await _databaseContext.Personajes
+                .Where(x => x.Personaje_ID == id)
+                .Select(x => new PersonajeDto
+                {
+                    Personaje_ID = x.Personaje_ID,
+                    Nombre = x.Nombre,
+                    Experiencia = x.Experiencia,
+
+                    Usuario = x.Usuario == null ? null : new UsuarioDto
+                    {
+                        Usuario_ID = x.Usuario.Usuario_ID,
+                        Nombre = x.Usuario.Nombre
+                    },
+
+                    Clase = x.Clase == null ? null : new ClaseDto
+                    {
+                        Clase_ID = x.Clase.Clase_ID,
+                        Nombre = x.Clase.Nombre
+                    },
+
+                    Raza = x.Raza == null ? null : new RazaDto
+                    {
+                        Raza_ID = x.Raza.Raza_ID,
+                        Nombre = x.Raza.Nombre
+                    }
+                })
+                .FirstOrDefaultAsync();
         }
 
         //CREAR PERSONAJE
@@ -101,6 +133,9 @@ namespace DnD_Helper_Backend.Repositories
         {
             var entity = await _databaseContext.Personajes
                 .FirstOrDefaultAsync(x => x.Personaje_ID == dto.Personaje_ID);
+            
+            if (entity == null)
+                return false;
 
             if (dto.Experiencia < 0)
                 throw new Exception("Experiencia no puede ser negativa");
@@ -108,8 +143,6 @@ namespace DnD_Helper_Backend.Repositories
             if (dto.Nombre.Length > 100)
                 throw new Exception("Nombre tiene más de 100 caracteres)");
 
-            if (entity == null)
-                return false;
             if (dto.Usuario_ID == 0 || dto.Clase_ID == 0 || dto.Raza_ID == 0)
                 return false;
 
@@ -138,26 +171,6 @@ namespace DnD_Helper_Backend.Repositories
             await _databaseContext.SaveChangesAsync();
 
             return true;
-        }
-
-        public async Task<Personaje> GetPersonajeById(int id)
-        {
-            var result = await _databaseContext.Personajes.Include(x => x.Clase).Include(x => x.Raza)
-                .Include(x => x.Usuario).Where(x => x.Personaje_ID == id).Select(x => new Personaje
-                {
-                    Personaje_ID = x.Personaje_ID,
-                    Nombre = x.Nombre,
-                    Experiencia = x.Experiencia,
-
-                    Usuario = x.Usuario,
-                    Clase = x.Clase,
-                    Raza = x.Raza,
-
-                    Usuario_ID = x.Usuario_ID,
-                    Clase_ID = x.Clase_ID,
-                    Raza_ID = x.Raza_ID
-                }).FirstOrDefaultAsync();
-            return result;
         }
         
     }

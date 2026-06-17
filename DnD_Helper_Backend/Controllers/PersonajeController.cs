@@ -30,24 +30,35 @@ namespace DnD_Helper_Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetPersonajeById")]
+        public async Task<IActionResult> GetPersonajeByIdAsync([FromQuery] int id)
+        {
+            var result = await _personajeRepository.GetPersonajeByIdAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
         [HttpPost("CreatePersonaje")]
-        public async Task<IActionResult> Create(CreatePersonajeDto dto)
+        public async Task<IActionResult> Create([FromBody] CreatePersonajeDto dto)
         {
             var created = await _personajeRepository.CreatePersonajeAsync(dto);
             return Ok(created);
         }
 
         [HttpPut("UpdatePersonaje")]
-        public async Task<IActionResult> Update(UpdatePersonajeDto dto)
+        public async Task<IActionResult> Update([FromBody] UpdatePersonajeDto dto)
         {
             var success = await _personajeRepository.UpdatePersonajeAsync(dto);
             return success ? Ok() : NotFound();
         }
         [HttpDelete("DeletePersonaje")]
-        public async Task<IActionResult> DeletePersonajeAsync(int id)
+        public async Task<IActionResult> DeletePersonajeAsync([FromQuery] int id)
         {
             var deletedPersonaje = await _personajeRepository.DeletePersonajeAsync(id);
-            return Ok(deletedPersonaje);
+            return deletedPersonaje ? Ok() : NotFound();
         }
     }
     }

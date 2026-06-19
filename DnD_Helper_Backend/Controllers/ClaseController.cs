@@ -10,6 +10,18 @@ namespace DnD_Helper_Backend.Controllers
     [ApiController]
     public class ClaseController : ControllerBase
     {
-        //private readonly IClaseRepository _personajeRepository;
+        private readonly IClaseReopository _clasejeRepository;
+        public ClaseController(IClaseReopository claseReopository)
+        {
+            _clasejeRepository = claseReopository;
+        }
+
+
+        [HttpGet("GetClaseLista")]
+        public async Task<IActionResult> GetClasesListAsync()
+        {
+            var result = await _clasejeRepository.GetClasesListAsync();
+            return Ok(result);
+        }
     }
 }

@@ -6,6 +6,5 @@ namespace DnD_Helper_Backend.Interfaces
     public interface IClaseReopository
     {
         Task<List<ClaseListDto>> GetClasesListAsync(); // VER LISTA DE CLASES (Template)
-
     }
 }

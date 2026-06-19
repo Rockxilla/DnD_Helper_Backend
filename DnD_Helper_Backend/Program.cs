@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IPersonajeRepository, PersonajeRepository>();
 builder.Services.AddScoped<IClaseReopository, ClaseRepository>();
+builder.Services.AddScoped<IRazaReopository, RazaRepository>();
 
 
 builder.Services.AddCors(opt =>

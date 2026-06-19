@@ -4,9 +4,12 @@
     {
         public short? RazaTemplate_ID { get; set; }
 
-        public int? RazaPersonaje_ID { get; set; }
-
         public string? Nombre { get; set; }
         public string? Descripcion { get; set; }
+    }
+    public class RazaListDto
+    {
+        public short? RazaTemplate_ID { get; set; }
+        public string? Nombre { get; set; }
     }
 }

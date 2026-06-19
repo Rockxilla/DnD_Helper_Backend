@@ -31,16 +31,18 @@ namespace DnD_Helper_Backend.Repositories
                         Nombre = x.Usuario.Nombre
                     },
 
-                    Clase = x.Clase == null ? null : new ClaseDto
+                    Clase = x.ClasePersonaje == null ? null : new ClaseDto
                     {
-                        Clase_ID = x.Clase.Clase_ID,
-                        Nombre = x.Clase.Nombre
+                        ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
+                        Nombre = x.ClasePersonaje.Nombre,
+                        Descripcion = x.ClasePersonaje.Descripcion
                     },
 
-                    Raza = x.Raza == null ? null : new RazaDto
+                    Raza = x.RazaPersonaje == null ? null : new RazaDto
                     {
-                        Raza_ID = x.Raza.Raza_ID,
-                        Nombre = x.Raza.Nombre
+                        RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
+                        Nombre = x.RazaPersonaje.Nombre,
+                        Descripcion = x.RazaPersonaje.Descripcion
                     }
                 })
                 .ToListAsync();
@@ -74,16 +76,18 @@ namespace DnD_Helper_Backend.Repositories
                         Nombre = x.Usuario.Nombre
                     },
 
-                    Clase = x.Clase == null ? null : new ClaseDto
+                    Clase = x.ClasePersonaje == null ? null : new ClaseDto
                     {
-                        Clase_ID = x.Clase.Clase_ID,
-                        Nombre = x.Clase.Nombre
+                        ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
+                        Nombre = x.ClasePersonaje.Nombre,
+                        Descripcion = x.ClasePersonaje.Descripcion
                     },
 
-                    Raza = x.Raza == null ? null : new RazaDto
+                    Raza = x.RazaPersonaje == null ? null : new RazaDto
                     {
-                        Raza_ID = x.Raza.Raza_ID,
-                        Nombre = x.Raza.Nombre
+                        RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
+                        Nombre = x.RazaPersonaje.Nombre,
+                        Descripcion = x.RazaPersonaje.Descripcion
                     }
                 })
                 .FirstOrDefaultAsync();
@@ -101,67 +105,93 @@ namespace DnD_Helper_Backend.Repositories
             if (dto.Nombre.Length > 100)
                 throw new Exception("Nombre tiene más de 100 caracteres)");
 
-            if (dto.Usuario_ID <= 0 || dto.Clase_ID <= 0 || dto.Raza_ID <= 0)
-                throw new Exception("Usuario, Clase o Raza no elegida");
-
             var usuarioExists = await _databaseContext.Usuarios.AnyAsync(x => x.Usuario_ID == dto.Usuario_ID);
-            var claseExists = await _databaseContext.Clases.AnyAsync(x => x.Clase_ID == dto.Clase_ID);
-            var razaExists = await _databaseContext.Razas.AnyAsync(x => x.Raza_ID == dto.Raza_ID);
 
-            if (!usuarioExists || !claseExists || !razaExists)
-                throw new Exception("Usuario, Clase o Raza no elegido no existente");
+            var claseTemplate = await _databaseContext.ClaseTemplates.FirstOrDefaultAsync(x => x.ClaseTemplate_ID == dto.ClaseTemplate_ID);
 
-            var entity = new Personaje
+            var razaTemplate = await _databaseContext.RazaTemplates.FirstOrDefaultAsync(x => x.RazaTemplate_ID == dto.RazaTemplate_ID);
+
+            if (!usuarioExists || claseTemplate == null || razaTemplate == null)
+                throw new Exception("Usuario, Clase o Raza no válida");
+
+            // CREAR PERSONAJE
+            var personaje = new Personaje
             {
                 Nombre = dto.Nombre.Trim(),
                 Experiencia = dto.Experiencia ?? 0,
                 Usuario_ID = dto.Usuario_ID,
-                Clase_ID = dto.Clase_ID,
-                Raza_ID = dto.Raza_ID,
-                
+                Estatus = true
+            };
+            _databaseContext.Personajes.Add(personaje);
+            await _databaseContext.SaveChangesAsync();
+
+            // CREAR CLASE (del Template)
+            var clasePersonaje = new ClasePersonaje
+            {
+                Personaje_ID = personaje.Personaje_ID,
+                ClaseTemplate_ID = claseTemplate.ClaseTemplate_ID,
+                Nombre = claseTemplate.Nombre,
+                Descripcion = claseTemplate.Descripcion,
                 Estatus = true
             };
 
-            _databaseContext.Personajes.Add(entity);
+            // CREAR RAZA (del Template)
+            var razaPersonaje = new RazaPersonaje
+            {
+                Personaje_ID = personaje.Personaje_ID,
+                RazaTemplate_ID = razaTemplate.RazaTemplate_ID,
+                Nombre = razaTemplate.Nombre,
+                Descripcion = razaTemplate.Descripcion,
+                Estatus = true
+            };
+
+            _databaseContext.ClasePersonajes.Add(clasePersonaje);
+            _databaseContext.RazaPersonajes.Add(razaPersonaje);
+
             await _databaseContext.SaveChangesAsync();
 
-            return entity;
+            return personaje;
         }
 
         //EDITAR PERSONAJE
         public async Task<bool> UpdatePersonajeAsync(UpdatePersonajeDto dto)
         {
-            var entity = await _databaseContext.Personajes
-                .FirstOrDefaultAsync(x => x.Personaje_ID == dto.Personaje_ID);
-            
+            var entity = await _databaseContext.Personajes.Include(x => x.ClasePersonaje).Include(x => x.RazaPersonaje).FirstOrDefaultAsync(x => x.Personaje_ID == dto.Personaje_ID);
+
             if (entity == null)
                 return false;
 
             if (dto.Experiencia < 0)
                 throw new Exception("Experiencia no puede ser negativa");
 
-            if (dto.Nombre.Length > 100)
-                throw new Exception("Nombre tiene más de 100 caracteres)");
+            if (!string.IsNullOrWhiteSpace(dto.Nombre) && dto.Nombre.Length > 100)
+                throw new Exception("Nombre tiene más de 100 caracteres");
 
-            if (dto.Usuario_ID == 0 || dto.Clase_ID == 0 || dto.Raza_ID == 0)
-                return false;
-
+            // EDITAR DATOS DEL PERSONAJE
             entity.Nombre = dto.Nombre ?? entity.Nombre;
             entity.Experiencia = dto.Experiencia ?? entity.Experiencia;
-            entity.Usuario_ID = dto.Usuario_ID;
-            entity.Clase_ID = dto.Clase_ID;
-            entity.Raza_ID = dto.Raza_ID;
+            // EDITAR CLASE
+            if (entity.ClasePersonaje != null)
+            {
+                entity.ClasePersonaje.Nombre = dto.ClaseNombre ?? entity.ClasePersonaje.Nombre;
+                entity.ClasePersonaje.Descripcion = dto.ClaseDescripcion ?? entity.ClasePersonaje.Descripcion;
+            }
+            // EDITAR RAZA
+            if (entity.RazaPersonaje != null)
+            {
+                entity.RazaPersonaje.Nombre = dto.RazaNombre ?? entity.RazaPersonaje.Nombre;
+
+                entity.RazaPersonaje.Descripcion = dto.RazaDescripcion ?? entity.RazaPersonaje.Descripcion;
+            }
 
             await _databaseContext.SaveChangesAsync();
-
             return true;
         }
 
         //BORRAR PERSONAJE
         public async Task<bool> DeletePersonajeAsync(int id)
         {
-            var entity = await _databaseContext.Personajes
-                .FirstOrDefaultAsync(x => x.Personaje_ID == id);
+            var entity = await _databaseContext.Personajes.FirstOrDefaultAsync(x => x.Personaje_ID == id);
 
             if (entity == null)
                 return false;

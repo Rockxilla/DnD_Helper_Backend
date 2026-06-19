@@ -7,6 +7,7 @@
         public int? Experiencia { get; set; }
 
         public UsuarioDto? Usuario { get; set; }
+
         public ClaseDto? Clase { get; set; }
         public RazaDto? Raza { get; set; }
     }
@@ -21,21 +22,25 @@
     {
         public string? Nombre { get; set; }
         public int? Experiencia { get; set; }
-
         public int Usuario_ID { get; set; }
-        public short Clase_ID { get; set; }
-        public short Raza_ID { get; set; }
+
+        public short ClaseTemplate_ID { get; set; }
+        public short RazaTemplate_ID { get; set; }
     }
 
     public class UpdatePersonajeDto
     {
         public int Personaje_ID { get; set; }
+
         public string? Nombre { get; set; }
         public int? Experiencia { get; set; }
 
-        public int Usuario_ID { get; set; }
-        public short Clase_ID { get; set; }
-        public short Raza_ID { get; set; }
+        // EDICION DE OTROS DATOS
+        public string? ClaseNombre { get; set; }
+        public string? ClaseDescripcion { get; set; }
+
+        public string? RazaNombre { get; set; }
+        public string? RazaDescripcion { get; set; }
     }
 
     public class UsuarioDto
@@ -46,13 +51,21 @@
 
     public class ClaseDto
     {
-        public short Clase_ID { get; set; }
+        public short? ClaseTemplate_ID { get; set; }
+
+        public int? ClasePersonaje_ID { get; set; }
+
         public string? Nombre { get; set; }
+        public string? Descripcion { get; set; }
     }
 
     public class RazaDto
     {
-        public short Raza_ID { get; set; }
+        public short? RazaTemplate_ID { get; set; }
+
+        public int? RazaPersonaje_ID { get; set; }
+
         public string? Nombre { get; set; }
+        public string? Descripcion { get; set; }
     }
 }

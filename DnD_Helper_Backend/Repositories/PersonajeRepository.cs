@@ -31,14 +31,14 @@ namespace DnD_Helper_Backend.Repositories
                         Nombre = x.Usuario.Nombre
                     },
 
-                    Clase = x.ClasePersonaje == null ? null : new ClaseDto
+                    Clase = x.ClasePersonaje == null ? null : new ClasePersonajeDto
                     {
                         ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
                         Nombre = x.ClasePersonaje.Nombre,
                         Descripcion = x.ClasePersonaje.Descripcion
                     },
 
-                    Raza = x.RazaPersonaje == null ? null : new RazaDto
+                    Raza = x.RazaPersonaje == null ? null : new RazaPersonajeDto
                     {
                         RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
                         Nombre = x.RazaPersonaje.Nombre,
@@ -76,14 +76,14 @@ namespace DnD_Helper_Backend.Repositories
                         Nombre = x.Usuario.Nombre
                     },
 
-                    Clase = x.ClasePersonaje == null ? null : new ClaseDto
+                    Clase = x.ClasePersonaje == null ? null : new ClasePersonajeDto
                     {
                         ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
                         Nombre = x.ClasePersonaje.Nombre,
                         Descripcion = x.ClasePersonaje.Descripcion
                     },
 
-                    Raza = x.RazaPersonaje == null ? null : new RazaDto
+                    Raza = x.RazaPersonaje == null ? null : new RazaPersonajeDto
                     {
                         RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
                         Nombre = x.RazaPersonaje.Nombre,

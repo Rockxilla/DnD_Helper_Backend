@@ -1,6 +1,6 @@
 ﻿namespace DnD_Helper_Backend.DTOs
 {
-    public class RazaDto
+    public class RazaPersonajeDto
     {
         public short? RazaTemplate_ID { get; set; }
 

@@ -8,8 +8,8 @@
 
         public UsuarioDto? Usuario { get; set; }
 
-        public ClaseDto? Clase { get; set; }
-        public RazaDto? Raza { get; set; }
+        public ClasePersonajeDto? Clase { get; set; }
+        public RazaPersonajeDto? Raza { get; set; }
     }
     public class PersonajeListDto
     {

@@ -1,6 +1,6 @@
 ﻿namespace DnD_Helper_Backend.DTOs
 {
-    public class ClaseDto
+    public class ClasePersonajeDto
     {
         public short? ClaseTemplate_ID { get; set; }
 

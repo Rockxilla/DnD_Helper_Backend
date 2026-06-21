@@ -12,8 +12,9 @@ namespace DnD_Helper_Backend.Models
         public short? ClaseTemplate_ID { get; set; }
 
         // EDITABLE
-        public string? Nombre { get; set; }
-        public string? Descripcion { get; set; }
+        public string?  Nombre { get; set; }
+        public string?  Descripcion { get; set; }
+        public byte?    Nivel { get; set; }
 
         public bool Estatus { get; set; }
 

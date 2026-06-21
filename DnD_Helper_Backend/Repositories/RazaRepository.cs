@@ -15,7 +15,7 @@ namespace DnD_Helper_Backend.Repositories
         {
             _databaseContext = dbContext;
         }
-        // VER LISTA DE RazaS (Template)
+        // VER LISTA DE RAZAS (Template)
         public async Task<List<RazaListDto>> GetRazasListAsync()
         {
             return await _databaseContext.RazaTemplates

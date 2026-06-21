@@ -29,20 +29,6 @@ namespace DnD_Helper_Backend.Repositories
                     {
                         Usuario_ID = x.Usuario.Usuario_ID,
                         Nombre = x.Usuario.Nombre
-                    },
-
-                    Clase = x.ClasePersonaje == null ? null : new ClasePersonajeDto
-                    {
-                        ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
-                        Nombre = x.ClasePersonaje.Nombre,
-                        Descripcion = x.ClasePersonaje.Descripcion
-                    },
-
-                    Raza = x.RazaPersonaje == null ? null : new RazaPersonajeDto
-                    {
-                        RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
-                        Nombre = x.RazaPersonaje.Nombre,
-                        Descripcion = x.RazaPersonaje.Descripcion
                     }
                 })
                 .ToListAsync();
@@ -74,27 +60,12 @@ namespace DnD_Helper_Backend.Repositories
                     {
                         Usuario_ID = x.Usuario.Usuario_ID,
                         Nombre = x.Usuario.Nombre
-                    },
-
-                    Clase = x.ClasePersonaje == null ? null : new ClasePersonajeDto
-                    {
-                        ClaseTemplate_ID = x.ClasePersonaje.ClaseTemplate_ID,
-                        Nombre = x.ClasePersonaje.Nombre,
-                        Descripcion = x.ClasePersonaje.Descripcion
-                    },
-
-                    Raza = x.RazaPersonaje == null ? null : new RazaPersonajeDto
-                    {
-                        RazaTemplate_ID = x.RazaPersonaje.RazaTemplate_ID,
-                        Nombre = x.RazaPersonaje.Nombre,
-                        Descripcion = x.RazaPersonaje.Descripcion
                     }
                 })
                 .FirstOrDefaultAsync();
         }
-
         //CREAR PERSONAJE
-        public async Task<Personaje> CreatePersonajeAsync(CreatePersonajeDto dto)
+        public async Task<int> CreatePersonajeAsync(CreatePersonajeDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre))
                 throw new Exception("Nombre es obligatorio");
@@ -132,6 +103,7 @@ namespace DnD_Helper_Backend.Repositories
                 ClaseTemplate_ID = claseTemplate.ClaseTemplate_ID,
                 Nombre = claseTemplate.Nombre,
                 Descripcion = claseTemplate.Descripcion,
+                Nivel = dto.ClaseNivelInicial,
                 Estatus = true
             };
 
@@ -150,13 +122,12 @@ namespace DnD_Helper_Backend.Repositories
 
             await _databaseContext.SaveChangesAsync();
 
-            return personaje;
+            return personaje.Personaje_ID;
         }
-
         //EDITAR PERSONAJE
-        public async Task<bool> UpdatePersonajeAsync(UpdatePersonajeDto dto)
+        public async Task< bool> UpdatePersonajeAsync(UpdatePersonajeDto dto)
         {
-            var entity = await _databaseContext.Personajes.Include(x => x.ClasePersonaje).Include(x => x.RazaPersonaje).FirstOrDefaultAsync(x => x.Personaje_ID == dto.Personaje_ID);
+            var entity = await _databaseContext.Personajes.FirstOrDefaultAsync(x => x.Personaje_ID == dto.Personaje_ID);
 
             if (entity == null)
                 return false;
@@ -170,24 +141,10 @@ namespace DnD_Helper_Backend.Repositories
             // EDITAR DATOS DEL PERSONAJE
             entity.Nombre = dto.Nombre ?? entity.Nombre;
             entity.Experiencia = dto.Experiencia ?? entity.Experiencia;
-            // EDITAR CLASE
-            if (entity.ClasePersonaje != null)
-            {
-                entity.ClasePersonaje.Nombre = dto.ClaseNombre ?? entity.ClasePersonaje.Nombre;
-                entity.ClasePersonaje.Descripcion = dto.ClaseDescripcion ?? entity.ClasePersonaje.Descripcion;
-            }
-            // EDITAR RAZA
-            if (entity.RazaPersonaje != null)
-            {
-                entity.RazaPersonaje.Nombre = dto.RazaNombre ?? entity.RazaPersonaje.Nombre;
-
-                entity.RazaPersonaje.Descripcion = dto.RazaDescripcion ?? entity.RazaPersonaje.Descripcion;
-            }
 
             await _databaseContext.SaveChangesAsync();
             return true;
         }
-
         //BORRAR PERSONAJE
         public async Task<bool> DeletePersonajeAsync(int id)
         {
@@ -202,6 +159,33 @@ namespace DnD_Helper_Backend.Repositories
 
             return true;
         }
-        
+
+        // GET RAZA DEL PERSONAJE
+        public async Task<RazaPersonajeDto?> GetPersonajeRazaAsync(int personajeId)
+        {
+            return await _databaseContext.RazaPersonajes
+                .Where(x => x.Personaje_ID == personajeId)
+                .Select(x => new RazaPersonajeDto
+                {
+                    RazaTemplate_ID = x.RazaTemplate_ID,
+                    Nombre = x.Nombre,
+                    Descripcion = x.Descripcion
+                })
+                .FirstOrDefaultAsync();
+        }
+        // GET CLASES DEL PERSONAJE
+        public async Task<List<ClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId)
+        {
+            return await _databaseContext.ClasePersonajes
+                .Where(x => x.Personaje_ID == personajeId)
+                .Select(x => new ClasePersonajeDto
+                {
+                    ClaseTemplate_ID = x.ClaseTemplate_ID,
+                    Nombre = x.Nombre,
+                    Descripcion = x.Descripcion,
+                    Nivel = x.Nivel
+                })
+                .ToListAsync();
+        }
     }
 }

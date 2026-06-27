@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DnD_Helper_Backend.Models
+namespace DnD_Helper_Backend.Models.Templates
 {
     public class RazaTemplate
     {

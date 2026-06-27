@@ -14,7 +14,7 @@ namespace DnD_Helper_Backend.Interfaces
 
         //GETS DE RAZA Y CLASES
         Task<RazaPersonajeDto?> GetPersonajeRazaAsync(int personajeId);
-        Task<List<ClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId);
+        Task<List<GetClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId);
 
     }
 }

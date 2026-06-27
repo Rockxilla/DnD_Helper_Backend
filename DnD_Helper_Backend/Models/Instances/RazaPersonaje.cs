@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DnD_Helper_Backend.Models.Templates;
+using System.ComponentModel.DataAnnotations;
 
-namespace DnD_Helper_Backend.Models
+namespace DnD_Helper_Backend.Models.Instances
 {
     public class RazaPersonaje
     {

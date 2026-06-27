@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DnD_Helper_Backend.Models.Instances;
+using System.ComponentModel.DataAnnotations;
 
 namespace DnD_Helper_Backend.Models
 {

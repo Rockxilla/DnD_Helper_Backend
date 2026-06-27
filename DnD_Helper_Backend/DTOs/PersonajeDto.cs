@@ -44,7 +44,7 @@
         public UsuarioDto? Usuario { get; set; }
 
         public RazaPersonajeDto? Raza { get; set; }
-        public List<ClasePersonajeDto>? Clases { get; set; }
+        public List<GetClasePersonajeDto>? Clases { get; set; }
 
         // public List<SkillDto> Skills { get; set; }
     }

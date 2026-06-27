@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DnD_Helper_Backend.Models.Global;
+using DnD_Helper_Backend.Models.Templates;
+using System.ComponentModel.DataAnnotations;
 
-namespace DnD_Helper_Backend.Models
+namespace DnD_Helper_Backend.Models.Instances
 {
     public class ClasePersonaje
     {
@@ -15,11 +17,14 @@ namespace DnD_Helper_Backend.Models
         public string?  Nombre { get; set; }
         public string?  Descripcion { get; set; }
         public byte?    Nivel { get; set; }
+        public byte? Hit_Dice_ID { get; set; }
 
         public bool Estatus { get; set; }
 
         // NAVEGACION
         public virtual Personaje? Personaje { get; set; }
         public virtual ClaseTemplate? ClaseTemplate { get; set; }
+        public virtual Dado? HitDice { get; set; }
+
     }
 }

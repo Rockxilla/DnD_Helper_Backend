@@ -156,7 +156,16 @@ namespace DnD_Helper_Backend.Data
             });
 
             //Stats y Salud
-            modelBuilder.Entity<StatsPersonaje>().ToTable("StatsPersonaje");
+            modelBuilder.Entity<StatsPersonaje>(entity =>
+            {
+                entity.ToTable("StatsPersonaje");
+
+                entity.Property(e => e.ArmorClassBonus).HasColumnName("armor_class_bonus");
+                entity.Property(e => e.InitiativeBonus).HasColumnName("initiative_bonus");
+                entity.Property(e => e.ProficiencyBonus).HasColumnName("proficiency_bonus");
+                entity.Property(e => e.MovementBonus).HasColumnName("movement_bonus");
+                entity.Property(e => e.Inspiration).HasColumnName("inspiration");
+            });
             modelBuilder.Entity<SaludPersonaje>().ToTable("SaludPersonaje");
             
             // Usuario

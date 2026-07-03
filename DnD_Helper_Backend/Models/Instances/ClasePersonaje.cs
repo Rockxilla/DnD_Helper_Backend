@@ -16,7 +16,7 @@ namespace DnD_Helper_Backend.Models.Instances
         // EDITABLE
         public string?  Nombre { get; set; }
         public string?  Descripcion { get; set; }
-        public byte?    Nivel { get; set; }
+        public byte    Nivel { get; set; }
         public byte? Hit_Dice_ID { get; set; }
 
         public bool Estatus { get; set; }

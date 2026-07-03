@@ -25,6 +25,8 @@
         public short RazaTemplate_ID { get; set; }
 
         public byte ClaseNivelInicial { get; set; } = 1;
+
+        public ScoresDto Scores { get; set; } = new();
     }
 
     public class UpdatePersonajeDto
@@ -34,21 +36,6 @@
         public string? Nombre { get; set; }
         public int? Experiencia { get; set; }
     }
-
-    public class PersonajeDetailDto
-    {
-        public int Personaje_ID { get; set; }
-        public string? Nombre { get; set; }
-        public int Experiencia { get; set; }
-
-        public UsuarioDto? Usuario { get; set; }
-
-        public RazaPersonajeDto? Raza { get; set; }
-        public List<GetClasePersonajeDto>? Clases { get; set; }
-
-        // public List<SkillDto> Skills { get; set; }
-    }
-
 
     public class UsuarioDto
     {

@@ -18,13 +18,11 @@ namespace DnD_Helper_Backend.Repositories
         // VER LISTA DE CLASES (Template)
         public async Task<List<ClaseListDto>> GetClasesListAsync()
         {
-            return await _databaseContext.ClaseTemplates
-                .Select(x => new ClaseListDto
+            return await _databaseContext.ClaseTemplates.Select(x => new ClaseListDto
                 {
                     ClaseTemplate_ID = x.ClaseTemplate_ID,
                     Nombre = x.Nombre,
-                })
-                .ToListAsync();
+                }).ToListAsync();
         }
 
     }

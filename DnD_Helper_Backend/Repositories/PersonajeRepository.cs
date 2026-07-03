@@ -2,6 +2,8 @@
 using DnD_Helper_Backend.DTOs;
 using DnD_Helper_Backend.Interfaces;
 using DnD_Helper_Backend.Models.Instances;
+using DnD_Helper_Backend.Services;
+using DnD_Helper_Backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Net.NetworkInformation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -11,9 +13,16 @@ namespace DnD_Helper_Backend.Repositories
     public class PersonajeRepository : IPersonajeRepository
     {
         public readonly DnDHelperDBContext _databaseContext;
-        public PersonajeRepository(DnDHelperDBContext dbContext)
+        private readonly IPersonajeCrearService _personajeCrearService;
+        private readonly ISkillService _skillService;
+
+        public PersonajeRepository(DnDHelperDBContext dbContext, IPersonajeCrearService personajeCrearService, ISkillService skillService)
         {
             _databaseContext = dbContext;
+
+            _personajeCrearService = personajeCrearService;
+
+            _skillService = skillService;
         }
         //VER TODOS PERSONAJES
         public async Task<List<PersonajeDto>> GetPersonajesAsync()
@@ -30,8 +39,7 @@ namespace DnD_Helper_Backend.Repositories
                         Usuario_ID = x.Usuario.Usuario_ID,
                         Nombre = x.Usuario.Nombre
                     }
-                })
-                .ToListAsync();
+                }).ToListAsync();
         }
         // VER PERSONAJES, LISTA CORTA
         public async Task<List<PersonajeListDto>> GetPersonajesListAsync()
@@ -42,8 +50,7 @@ namespace DnD_Helper_Backend.Repositories
                     Personaje_ID = x.Personaje_ID,
                     Nombre = x.Nombre,
                     Experiencia = x.Experiencia
-                })
-                .ToListAsync();
+                }).ToListAsync();
         }
         //VER 1 SOLO PERSONAJE
         public async Task<PersonajeDto?> GetPersonajeByIdAsync(int id)
@@ -61,8 +68,7 @@ namespace DnD_Helper_Backend.Repositories
                         Usuario_ID = x.Usuario.Usuario_ID,
                         Nombre = x.Usuario.Nombre
                     }
-                })
-                .FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync();
         }
         //CREAR PERSONAJE
         public async Task<int> CreatePersonajeAsync(CreatePersonajeDto dto)
@@ -102,6 +108,13 @@ namespace DnD_Helper_Backend.Repositories
                 };
                 _databaseContext.Personajes.Add(personaje);
                 await _databaseContext.SaveChangesAsync();
+
+                // CREAR SCORES DE HABILIDAD
+                await _personajeCrearService.CreateScoresInicialesAsync(personaje.Personaje_ID, dto.Scores);
+                // CREAR SKILLS
+                await _personajeCrearService.CreateSkillsInicialesAsync(personaje.Personaje_ID);
+                // CREAR STATS INICIALES
+                await _personajeCrearService.CreateStatsInicialesAsync(personaje.Personaje_ID);
 
                 Console.WriteLine(personaje.Personaje_ID);
                 // CREAR CLASE (del Template)
@@ -180,30 +193,37 @@ namespace DnD_Helper_Backend.Repositories
         // GET RAZA DEL PERSONAJE
         public async Task<RazaPersonajeDto?> GetPersonajeRazaAsync(int personajeId)
         {
-            return await _databaseContext.RazaPersonajes
-                .Where(x => x.Personaje_ID == personajeId)
-                .Select(x => new RazaPersonajeDto
+            return await _databaseContext.RazaPersonajes.Where(x => x.Personaje_ID == personajeId).Select(x => new RazaPersonajeDto
                 {
                     RazaTemplate_ID = x.RazaTemplate_ID,
                     Nombre = x.Nombre,
                     Descripcion = x.Descripcion
-                })
-                .FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync();
         }
         // GET CLASES DEL PERSONAJE
         public async Task<List<GetClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId)
         {
-            return await _databaseContext.ClasePersonajes
-                .Where(x => x.Personaje_ID == personajeId)
-                .Select(x => new GetClasePersonajeDto
+            return await _databaseContext.ClasePersonajes.Where(x => x.Personaje_ID == personajeId).Select(x => new GetClasePersonajeDto
                 {
                     ClaseTemplate_ID = x.ClaseTemplate_ID,
                     Nombre = x.Nombre,
                     Descripcion = x.Descripcion,
                     Nivel = x.Nivel,
                     Hit_Dice_ID = x.Hit_Dice_ID
-                })
-                .ToListAsync();
+                }).ToListAsync();
+        }
+        // GET SCORES DEL PERSONAJE
+        public async Task<List<GetScorePersonajeDto>> GetPersonajeScoresAsync(int personajeId)
+        {
+            return await _databaseContext.ScorePersonajes.Where(x => x.Personaje_ID == personajeId).Select(x => new GetScorePersonajeDto
+                {
+                    Habilidad_ID = x.Habilidad_ID,
+                    NombreCorto = x.Habilidad.NombreCorto,
+                    Nombre = x.Habilidad.Nombre,
+                    ValorBase = x.ValorBase,
+                    BonusTemporal = x.BonusTemporal,
+                    EsProficiente = x.EsProficiente
+                }).ToListAsync();
         }
     }
 }

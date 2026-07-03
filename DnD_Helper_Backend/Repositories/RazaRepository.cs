@@ -18,13 +18,11 @@ namespace DnD_Helper_Backend.Repositories
         // VER LISTA DE RAZAS (Template)
         public async Task<List<RazaListDto>> GetRazasListAsync()
         {
-            return await _databaseContext.RazaTemplates
-                .Select(x => new RazaListDto
+            return await _databaseContext.RazaTemplates.Select(x => new RazaListDto
                 {
                     RazaTemplate_ID = x.RazaTemplate_ID,
                     Nombre = x.Nombre,
-                })
-                .ToListAsync();
+                }).ToListAsync();
         }
 
     }

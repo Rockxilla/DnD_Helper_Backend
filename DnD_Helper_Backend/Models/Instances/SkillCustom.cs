@@ -12,7 +12,7 @@ namespace DnD_Helper_Backend.Models.Instances
         public byte Habilidad_ID { get; set; }
 
         public virtual Personaje? Personaje { get; set; }
-        public virtual Habilidad? Habilidad { get; set; }
+        public virtual Habilidad Habilidad { get; set; } = null!;
         public virtual ICollection<SkillPersonaje> SkillPersonajes { get; set; } = new List<SkillPersonaje>();
 
     }

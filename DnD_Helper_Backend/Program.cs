@@ -1,6 +1,8 @@
 using DnD_Helper_Backend.Data;
 using DnD_Helper_Backend.Interfaces;
 using DnD_Helper_Backend.Repositories;
+using DnD_Helper_Backend.Services;
+using DnD_Helper_Backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -14,10 +16,14 @@ builder.Services.AddDbContext<DnDHelperDBContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+//Servicios API
 builder.Services.AddScoped<IPersonajeRepository, PersonajeRepository>();
 builder.Services.AddScoped<IClaseReopository, ClaseRepository>();
 builder.Services.AddScoped<IRazaReopository, RazaRepository>();
-
+//Servicios Locales
+builder.Services.AddScoped<IPersonajeCrearService, PersonajeCrearService>();
+builder.Services.AddScoped<IPersonajeCalcService, PersonajeCalcService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
 
 builder.Services.AddCors(opt =>
 {

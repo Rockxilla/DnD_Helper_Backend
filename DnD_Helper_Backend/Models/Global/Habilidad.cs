@@ -13,7 +13,6 @@ namespace DnD_Helper_Backend.Models.Global
 
         public ICollection<SkillCustom> SkillCustoms { get; set; } = new List<SkillCustom>();
         public ICollection<SkillTemplate> SkillTemplates { get; set; } = new List<SkillTemplate>();
-        public ICollection<SkillPersonaje> SkillPersonajes { get; set; } = new List<SkillPersonaje>();
         public virtual ICollection<ScorePersonaje>? ScoresPersonaje { get; set; } = new List<ScorePersonaje>();
 
     }

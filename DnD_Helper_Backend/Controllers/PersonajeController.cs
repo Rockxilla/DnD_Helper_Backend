@@ -1,6 +1,7 @@
 ﻿using DnD_Helper_Backend.DTOs;
 using DnD_Helper_Backend.Interfaces;
 using DnD_Helper_Backend.Models;
+using DnD_Helper_Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.PortableExecutable;
 
@@ -11,9 +12,11 @@ namespace DnD_Helper_Backend.Controllers
     public class PersonajeController : ControllerBase
     {
         private readonly IPersonajeRepository _personajeRepository;
-        public PersonajeController(IPersonajeRepository personajeRepository)
+        private readonly ISkillService _skillService;
+        public PersonajeController(IPersonajeRepository personajeRepository, ISkillService skillService)
         {
             _personajeRepository = personajeRepository;
+            _skillService = skillService;
         }
 
         [HttpGet()]
@@ -81,6 +84,19 @@ namespace DnD_Helper_Backend.Controllers
         {
             var result = await _personajeRepository.GetPersonajeClasesAsync(id);
 
+            return Ok(result);
+        }
+        [HttpGet("{id}/scores")]
+        public async Task<IActionResult> GetScores(int id)
+        {
+            var result = await _personajeRepository.GetPersonajeScoresAsync(id);
+
+            return Ok(result);
+        }
+        [HttpGet("{id}/skills")]
+        public async Task<IActionResult> GetSkills(int id)
+        {
+            var result = await _skillService.GetPersonajeSkillsAsync(id);
             return Ok(result);
         }
     }

@@ -12,9 +12,9 @@ namespace DnD_Helper_Backend.Interfaces
         Task<bool> UpdatePersonajeAsync(UpdatePersonajeDto dto);
         Task<bool> DeletePersonajeAsync(int id);
 
-        //GETS DE RAZA Y CLASES
-        Task<RazaPersonajeDto?> GetPersonajeRazaAsync(int personajeId);
-        Task<List<GetClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId);
-
+        //GETS DE INFO ADICIONAL
+        Task<RazaPersonajeDto?> GetPersonajeRazaAsync(int personajeId);             //Raza
+        Task<List<GetClasePersonajeDto>> GetPersonajeClasesAsync(int personajeId);  //Clases
+        Task<List<GetScorePersonajeDto>> GetPersonajeScoresAsync(int personajeId);  //Scores
     }
 }

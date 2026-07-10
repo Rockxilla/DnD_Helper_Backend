@@ -22,7 +22,11 @@ namespace DnD_Helper_Backend.Repositories
                 {
                     ClaseTemplate_ID = x.ClaseTemplate_ID,
                     Nombre = x.Nombre,
-                }).ToListAsync();
+                    Descripcion = x.Descripcion,
+                    Hit_Dice_ID = x.Hit_Dice_ID,
+                    HitDiceNombre = x.HitDice!.Nombre
+            })
+            .ToListAsync();
         }
 
     }

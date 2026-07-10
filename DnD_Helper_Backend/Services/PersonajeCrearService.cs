@@ -14,6 +14,70 @@ namespace DnD_Helper_Backend.Services
             _databaseContext = databaseContext;
         }
 
+        //CREAR CLASE INICIAL
+        public async Task CreateClaseInicialAsync(int personajeId, CreatePersonajeDto dto)
+        {
+            ClasePersonaje clase = new()
+            {
+                Personaje_ID = personajeId,
+                Nivel = dto.ClaseNivelInicial,
+                Estatus = true
+            };
+
+            if (dto.ClaseTemplate_ID.HasValue)
+            {
+                var template = await _databaseContext.ClaseTemplates.FirstOrDefaultAsync(x => x.ClaseTemplate_ID == dto.ClaseTemplate_ID);
+
+                if (template == null)
+                    throw new Exception("Clase inválida");
+
+                clase.ClaseTemplate_ID = template.ClaseTemplate_ID;
+                clase.Nombre = string.IsNullOrWhiteSpace(dto.ClaseNombre)? template.Nombre : dto.ClaseNombre.Trim();
+                clase.Descripcion = string.IsNullOrWhiteSpace(dto.ClaseDescripcion) ? template.Descripcion : dto.ClaseDescripcion.Trim();
+                clase.Hit_Dice_ID = dto.HitDice_ID ?? template.Hit_Dice_ID;
+            }
+            else
+            {
+                //Sin Template
+                clase.Nombre = string.IsNullOrWhiteSpace(dto.ClaseNombre) ? null : dto.ClaseNombre.Trim();
+                clase.Descripcion = string.IsNullOrWhiteSpace(dto.ClaseDescripcion) ? null : dto.ClaseDescripcion.Trim();
+                clase.Hit_Dice_ID = dto.HitDice_ID ?? 1;
+            }
+
+            _databaseContext.ClasePersonajes.Add(clase);
+        }
+        
+        //CREAR RAZA INICIAL
+        public async Task CreateRazaInicialAsync(int personajeId, CreatePersonajeDto dto)
+        {
+            RazaPersonaje raza = new()
+            {
+                Personaje_ID = personajeId,
+                Estatus = true
+            };
+
+            if (dto.RazaTemplate_ID.HasValue)
+            {
+                //Con Template
+                var template = await _databaseContext.RazaTemplates.FirstOrDefaultAsync(x => x.RazaTemplate_ID == dto.RazaTemplate_ID);
+
+                if (template == null)
+                    throw new Exception("Raza inválida");
+
+                raza.RazaTemplate_ID = template.RazaTemplate_ID;
+                raza.Nombre = string.IsNullOrWhiteSpace(dto.RazaNombre) ? template.Nombre : dto.RazaNombre.Trim();
+                raza.Descripcion = string.IsNullOrWhiteSpace(dto.RazaDescripcion) ? template.Descripcion : dto.RazaDescripcion.Trim();
+            }
+            else
+            {
+                //Sin Template
+                raza.Nombre = string.IsNullOrWhiteSpace(dto.RazaNombre) ? null : dto.RazaNombre.Trim();
+                raza.Descripcion = string.IsNullOrWhiteSpace(dto.RazaDescripcion) ? null : dto.RazaDescripcion.Trim();
+            }
+
+            _databaseContext.RazaPersonajes.Add(raza);
+        }
+
         //CREAR SKILLS INICIALES
         public async Task CreateSkillsInicialesAsync(int personajeId)
         {
@@ -26,10 +90,7 @@ namespace DnD_Helper_Backend.Services
                 Proficiencia = 0,
                 BonusTemporal = 0
             });
-
             _databaseContext.SkillPersonajes.AddRange(skills);
-
-            await _databaseContext.SaveChangesAsync();
         }
         //CREAR SCORES DE HABILIDAD INICIALES
         public async Task CreateScoresInicialesAsync(int personajeId, ScoresDto scoresDto)
@@ -58,18 +119,15 @@ namespace DnD_Helper_Backend.Services
             }).ToList();
 
             _databaseContext.ScorePersonajes.AddRange(scores);
-            await _databaseContext.SaveChangesAsync();
         }
 
         // CREAR STATS INICIALES
-        public async Task CreateStatsInicialesAsync(int personajeId)
+        public void CreateStatsIniciales(int personajeId)
         {
             _databaseContext.StatsPersonajes.Add(new StatsPersonaje
             {
                 Personaje_ID = personajeId
             });
-
-            await _databaseContext.SaveChangesAsync();
         }
     }
 }

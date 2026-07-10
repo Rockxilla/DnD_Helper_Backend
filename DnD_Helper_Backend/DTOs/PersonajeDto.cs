@@ -21,8 +21,16 @@
         public int? Experiencia { get; set; }
         public int Usuario_ID { get; set; }
 
-        public short ClaseTemplate_ID { get; set; }
-        public short RazaTemplate_ID { get; set; }
+        public short? ClaseTemplate_ID { get; set; }
+        public short? RazaTemplate_ID { get; set; }
+
+        // CUSTOM CLASE/RAZA
+        public string? ClaseNombre { get; set; }
+        public string? ClaseDescripcion { get; set; }
+        public byte? HitDice_ID { get; set; }
+
+        public string? RazaNombre { get; set; }
+        public string? RazaDescripcion { get; set; }
 
         public byte ClaseNivelInicial { get; set; } = 1;
 

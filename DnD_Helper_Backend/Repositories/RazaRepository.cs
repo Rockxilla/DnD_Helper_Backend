@@ -22,6 +22,7 @@ namespace DnD_Helper_Backend.Repositories
                 {
                     RazaTemplate_ID = x.RazaTemplate_ID,
                     Nombre = x.Nombre,
+                    Descripcion = x.Descripcion
                 }).ToListAsync();
         }
 

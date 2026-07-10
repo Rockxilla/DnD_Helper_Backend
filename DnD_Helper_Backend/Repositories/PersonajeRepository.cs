@@ -88,12 +88,8 @@ namespace DnD_Helper_Backend.Repositories
 
             var usuarioExists = await _databaseContext.Usuarios.AnyAsync(x => x.Usuario_ID == dto.Usuario_ID);
 
-            var claseTemplate = await _databaseContext.ClaseTemplates.FindAsync(dto.ClaseTemplate_ID);
-
-            var razaTemplate = await _databaseContext.RazaTemplates.FindAsync(dto.RazaTemplate_ID);
-
-            if (!usuarioExists || claseTemplate == null || razaTemplate == null)
-                throw new Exception("Usuario, Clase o Raza no válida");
+            if (!usuarioExists)
+                throw new Exception("Usuario no válido");
 
             using var transaction = await _databaseContext.Database.BeginTransactionAsync();
             try
@@ -114,33 +110,12 @@ namespace DnD_Helper_Backend.Repositories
                 // CREAR SKILLS
                 await _personajeCrearService.CreateSkillsInicialesAsync(personaje.Personaje_ID);
                 // CREAR STATS INICIALES
-                await _personajeCrearService.CreateStatsInicialesAsync(personaje.Personaje_ID);
-
+                _personajeCrearService.CreateStatsIniciales(personaje.Personaje_ID);
                 Console.WriteLine(personaje.Personaje_ID);
                 // CREAR CLASE (del Template)
-                var clasePersonaje = new ClasePersonaje
-                {
-                    Personaje_ID = personaje.Personaje_ID,
-                    ClaseTemplate_ID = claseTemplate.ClaseTemplate_ID,
-                    Nombre = claseTemplate.Nombre,
-                    Descripcion = claseTemplate.Descripcion,
-                    Nivel = dto.ClaseNivelInicial,
-                    Hit_Dice_ID = claseTemplate.Hit_Dice_ID,
-                    Estatus = true
-                };
-
+                await _personajeCrearService.CreateClaseInicialAsync(personaje.Personaje_ID, dto);
                 // CREAR RAZA (del Template)
-                var razaPersonaje = new RazaPersonaje
-                {
-                    Personaje_ID = personaje.Personaje_ID,
-                    RazaTemplate_ID = razaTemplate.RazaTemplate_ID,
-                    Nombre = razaTemplate.Nombre,
-                    Descripcion = razaTemplate.Descripcion,
-                    Estatus = true
-                };
-                
-                _databaseContext.ClasePersonajes.Add(clasePersonaje);
-                _databaseContext.RazaPersonajes.Add(razaPersonaje);
+                await _personajeCrearService.CreateRazaInicialAsync(personaje.Personaje_ID, dto);
 
                 await _databaseContext.SaveChangesAsync();
 

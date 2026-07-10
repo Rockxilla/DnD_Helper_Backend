@@ -21,7 +21,7 @@ namespace DnD_Helper_Backend.Services
         {
             //ADQUISICION DE DATOS
             var skills = await _databaseContext.SkillPersonajes.Where(x => x.Personaje_ID == personajeId).Include(x => x.SkillTemplate)
-                .ThenInclude(t => t.Habilidad).Include(x => x.SkillCustom).ThenInclude(c => c.Habilidad).ToListAsync();
+                .ThenInclude(t => t!.Habilidad).Include(x => x.SkillCustom).ThenInclude(c => c!.Habilidad).ToListAsync();
 
             var scores = await _databaseContext.ScorePersonajes.Where(x => x.Personaje_ID == personajeId).ToListAsync();
 

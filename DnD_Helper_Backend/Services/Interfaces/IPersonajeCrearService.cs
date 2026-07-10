@@ -6,6 +6,8 @@ namespace DnD_Helper_Backend.Services.Interfaces
     {
         Task CreateSkillsInicialesAsync(int personajeId);
         Task CreateScoresInicialesAsync(int personajeId, ScoresDto scoresDto);
-        Task CreateStatsInicialesAsync(int personajeId);
+        void CreateStatsIniciales(int personajeId);
+        Task CreateClaseInicialAsync(int personajeId, CreatePersonajeDto dto);
+        Task CreateRazaInicialAsync(int personajeId, CreatePersonajeDto dto);
     }
 }

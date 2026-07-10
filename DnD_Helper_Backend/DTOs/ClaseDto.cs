@@ -14,6 +14,9 @@
     {
         public short? ClaseTemplate_ID { get; set; }
         public string? Nombre { get; set; }
+        public string? Descripcion { get; set; }
+        public byte? Hit_Dice_ID { get; set; }
+        public string? HitDiceNombre { get; set; }
     }
 
 }

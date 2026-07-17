@@ -21,5 +21,6 @@ namespace DnD_Helper_Backend.Models.Instances
         // NAVEGACION
         public virtual Personaje? Personaje { get; set; }
         public virtual RazaTemplate? RazaTemplate { get; set; }
+        public virtual SubrazaPersonaje? Subraza { get; set; }
     }
 }

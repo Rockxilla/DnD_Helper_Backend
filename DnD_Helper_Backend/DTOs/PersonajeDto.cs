@@ -22,7 +22,11 @@
         public int Usuario_ID { get; set; }
 
         public short? ClaseTemplate_ID { get; set; }
+        public short? SubclaseTemplate_ID { get; set; }
+
         public short? RazaTemplate_ID { get; set; }
+        public int? SubrazaTemplate_ID { get; set; }
+
 
         // CUSTOM CLASE/RAZA
         public string? ClaseNombre { get; set; }
@@ -32,8 +36,12 @@
         public string? RazaNombre { get; set; }
         public string? RazaDescripcion { get; set; }
 
-        public byte ClaseNivelInicial { get; set; } = 1;
+        public string? SubclaseNombre { get; set; }
+        public string? SubclaseDescripcion { get; set; }
+        public string? SubrazaNombre { get; set; }
+        public string? SubrazaDescripcion { get; set; }
 
+        public byte ClaseNivelInicial { get; set; } = 1;
         public ScoresDto Scores { get; set; } = new();
     }
 

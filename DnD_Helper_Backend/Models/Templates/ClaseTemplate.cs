@@ -17,5 +17,6 @@ namespace DnD_Helper_Backend.Models.Templates
 
         public Dado? HitDice { get; set; }
         public ICollection<ClasePersonaje> Clases { get; set; } = new List<ClasePersonaje>();
+        public ICollection<SubclaseTemplate> Subclases { get; set; } = new List<SubclaseTemplate>();
     }
 }

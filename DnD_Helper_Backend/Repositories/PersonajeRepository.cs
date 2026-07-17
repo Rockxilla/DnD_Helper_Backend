@@ -112,11 +112,20 @@ namespace DnD_Helper_Backend.Repositories
                 // CREAR STATS INICIALES
                 _personajeCrearService.CreateStatsIniciales(personaje.Personaje_ID);
                 Console.WriteLine(personaje.Personaje_ID);
-                // CREAR CLASE (del Template)
-                await _personajeCrearService.CreateClaseInicialAsync(personaje.Personaje_ID, dto);
-                // CREAR RAZA (del Template)
-                await _personajeCrearService.CreateRazaInicialAsync(personaje.Personaje_ID, dto);
+                
+                // CREAR CLASE
+                var clase = await _personajeCrearService.CreateClaseInicialAsync(personaje.Personaje_ID, dto);
+                // CREAR RAZA
+                var raza = await _personajeCrearService.CreateRazaInicialAsync(personaje.Personaje_ID, dto);
+                //GUARDAR CLASE Y RAZA
+                await _databaseContext.SaveChangesAsync();
+                
+                // CREAR SUBCLASE
+                await _personajeCrearService.CreateSubclaseInicialAsync(clase.ClasePersonaje_ID, dto);
+                // CREAR SUBRAZA
+                await _personajeCrearService.CreateSubrazaInicialAsync(raza.RazaPersonaje_ID, dto);
 
+                //GUARDAR TODO
                 await _databaseContext.SaveChangesAsync();
 
                 await transaction.CommitAsync();

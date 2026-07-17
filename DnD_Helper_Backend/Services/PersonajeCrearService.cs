@@ -15,7 +15,7 @@ namespace DnD_Helper_Backend.Services
         }
 
         //CREAR CLASE INICIAL
-        public async Task CreateClaseInicialAsync(int personajeId, CreatePersonajeDto dto)
+        public async Task<ClasePersonaje> CreateClaseInicialAsync(int personajeId, CreatePersonajeDto dto)
         {
             ClasePersonaje clase = new()
             {
@@ -45,10 +45,46 @@ namespace DnD_Helper_Backend.Services
             }
 
             _databaseContext.ClasePersonajes.Add(clase);
+            return clase;
         }
-        
+
+        //CREAR SUBCLASE INICIAL
+        public async Task CreateSubclaseInicialAsync(int claseId, CreatePersonajeDto dto)
+        {
+            if (!dto.SubclaseTemplate_ID.HasValue && string.IsNullOrWhiteSpace(dto.SubclaseNombre) && string.IsNullOrWhiteSpace(dto.SubclaseDescripcion))
+            {
+                return;
+            }
+
+            SubclasePersonaje subclase = new()
+            {
+                ClasePersonaje_ID = claseId,
+                Estatus = true
+            };
+
+            if (dto.SubclaseTemplate_ID.HasValue)
+            {
+                var template = await _databaseContext.SubclaseTemplates.FirstOrDefaultAsync(x => x.SubclaseTemplate_ID == dto.SubclaseTemplate_ID);
+
+                if (template == null)
+                    throw new Exception("Subclase inválida");
+
+                subclase.SubclaseTemplate_ID = template.SubclaseTemplate_ID;
+                subclase.Nombre = string.IsNullOrWhiteSpace(dto.SubclaseNombre) ? template.Nombre : dto.SubclaseNombre.Trim();
+
+                subclase.Descripcion = string.IsNullOrWhiteSpace(dto.SubclaseDescripcion) ? template.Descripcion : dto.SubclaseDescripcion.Trim();
+            }
+            else
+            {
+                subclase.Nombre = string.IsNullOrWhiteSpace(dto.SubclaseNombre) ? null : dto.SubclaseNombre.Trim();
+                subclase.Descripcion = string.IsNullOrWhiteSpace(dto.SubclaseDescripcion) ? null : dto.SubclaseDescripcion.Trim();
+            }
+
+            _databaseContext.SubclasePersonajes.Add(subclase);
+        }
+
         //CREAR RAZA INICIAL
-        public async Task CreateRazaInicialAsync(int personajeId, CreatePersonajeDto dto)
+        public async Task<RazaPersonaje> CreateRazaInicialAsync(int personajeId, CreatePersonajeDto dto)
         {
             RazaPersonaje raza = new()
             {
@@ -76,7 +112,43 @@ namespace DnD_Helper_Backend.Services
             }
 
             _databaseContext.RazaPersonajes.Add(raza);
+            return raza;
         }
+
+        public async Task CreateSubrazaInicialAsync(int razaId, CreatePersonajeDto dto)
+        {
+            if (!dto.SubrazaTemplate_ID.HasValue && string.IsNullOrWhiteSpace(dto.SubrazaNombre) && string.IsNullOrWhiteSpace(dto.SubrazaDescripcion))
+            {
+                return;
+            }
+
+            SubrazaPersonaje subraza = new()
+            {
+                RazaPersonaje_ID = razaId,
+                Estatus = true
+            };
+
+            if (dto.SubrazaTemplate_ID.HasValue)
+            {
+                //Con Template
+                var template = await _databaseContext.SubrazaTemplates.FirstOrDefaultAsync(x => x.SubrazaTemplate_ID == dto.SubrazaTemplate_ID);
+
+                if (template == null)
+                    throw new Exception("Subraza inválida");
+
+                subraza.SubrazaTemplate_ID = template.SubrazaTemplate_ID;
+                subraza.Nombre = string.IsNullOrWhiteSpace(dto.SubrazaNombre) ? template.Nombre : dto.SubrazaNombre.Trim();
+                subraza.Descripcion = string.IsNullOrWhiteSpace(dto.SubrazaDescripcion) ? template.Descripcion : dto.SubrazaDescripcion.Trim();
+            }
+            else
+            {
+                subraza.Nombre = string.IsNullOrWhiteSpace(dto.SubrazaNombre) ? null : dto.SubrazaNombre.Trim();
+                subraza.Descripcion = string.IsNullOrWhiteSpace(dto.SubrazaDescripcion) ? null : dto.SubrazaDescripcion.Trim();
+            }
+
+            _databaseContext.SubrazaPersonajes.Add(subraza);
+        }
+
 
         //CREAR SKILLS INICIALES
         public async Task CreateSkillsInicialesAsync(int personajeId)

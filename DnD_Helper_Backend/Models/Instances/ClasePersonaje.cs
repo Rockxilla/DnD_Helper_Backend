@@ -25,6 +25,7 @@ namespace DnD_Helper_Backend.Models.Instances
         public virtual Personaje? Personaje { get; set; }
         public virtual ClaseTemplate? ClaseTemplate { get; set; }
         public virtual Dado? HitDice { get; set; }
+        public virtual SubclasePersonaje? Subclase { get; set; }
 
     }
 }

@@ -20,13 +20,17 @@ namespace DnD_Helper_Backend.Data
         public virtual DbSet<Habilidad> Habilidades { get; set; }
         public virtual DbSet<SkillTemplate> SkillTemplates { get; set; }
         public virtual DbSet<ClaseTemplate> ClaseTemplates { get; set; }
+        public virtual DbSet<SubclaseTemplate> SubclaseTemplates { get; set; }
         public virtual DbSet<RazaTemplate> RazaTemplates { get; set; }
-        
+        public virtual DbSet<SubrazaTemplate> SubrazaTemplates { get; set; }
+
         // Datos del Personaje
         public virtual DbSet<Personaje> Personajes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<ClasePersonaje> ClasePersonajes { get; set; }
+        public virtual DbSet<SubclasePersonaje> SubclasePersonajes { get; set; }
         public virtual DbSet<RazaPersonaje> RazaPersonajes { get; set; }
+        public virtual DbSet<SubrazaPersonaje> SubrazaPersonajes { get; set; }
         public virtual DbSet<SkillCustom> SkillCustoms { get; set; }
         public virtual DbSet<SkillPersonaje> SkillPersonajes { get; set; }
         public virtual DbSet<ScorePersonaje> ScorePersonajes { get; set; }
@@ -53,35 +57,70 @@ namespace DnD_Helper_Backend.Data
             });
 
             modelBuilder.Entity<Personaje>().HasQueryFilter(x => x.Estatus == true);
-            
-            // Clases
+
+            // Clase/Subclase Personaje
             modelBuilder.Entity<ClasePersonaje>(entity =>
             {
                 entity.ToTable("ClasePersonaje");
 
                 entity.Property(e => e.Nombre).HasMaxLength(50);
-
                 entity.HasOne(cp => cp.ClaseTemplate).WithMany(ct => ct.Clases).HasForeignKey(cp => cp.ClaseTemplate_ID).HasConstraintName("FK_ClaPerTemplate");
-
                 entity.HasOne(cp => cp.HitDice).WithMany(d => d.ClasePersonajes).HasForeignKey(cp => cp.Hit_Dice_ID).HasConstraintName("FK_ClaPerHitDice");
+                entity.HasOne(cp => cp.Subclase).WithOne(sp => sp.ClasePersonaje).HasForeignKey<SubclasePersonaje>(sp => sp.ClasePersonaje_ID).HasConstraintName("FK_SP_Clase");
             });
+            modelBuilder.Entity<SubclasePersonaje>(entity =>
+            {
+                entity.ToTable("SubclasePersonaje");
+
+                entity.Property(e => e.Nombre).HasMaxLength(100);
+                entity.HasOne(sp => sp.SubclaseTemplate).WithMany().HasForeignKey(sp => sp.SubclaseTemplate_ID).HasConstraintName("FK_SubP_Template");
+            });
+            // Clase/Subclase Template
             modelBuilder.Entity<ClaseTemplate>(entity =>
             {
                 entity.ToTable("ClaseTemplate");
 
                 entity.HasOne(c => c.HitDice).WithMany(d => d.ClaseTemplates).HasForeignKey(c => c.Hit_Dice_ID).HasConstraintName("FK_ClaseTemplate_Dado");
+                entity.HasMany(c => c.Subclases).WithOne(sc => sc.ClaseTemplate).HasForeignKey(sc => sc.ClaseTemplate_ID).HasConstraintName("FK_Subclase_Clase");
+            });
+            modelBuilder.Entity<SubclaseTemplate>(entity =>
+            {
+                entity.ToTable("SubclaseTemplate");
+
+                entity.Property(e => e.Nombre).HasMaxLength(100);
             });
 
-            // Razas
+            // Raza/Subraza Personaje
             modelBuilder.Entity<RazaPersonaje>(entity =>
             {
                 entity.ToTable("RazaPersonaje");
 
                 entity.Property(e => e.Nombre).HasMaxLength(50);
-
-                entity.HasOne(rp => rp.RazaTemplate).WithMany().HasForeignKey(rp => rp.RazaTemplate_ID).HasConstraintName("FK_RazPerTemplate");
+                entity.HasOne(rp => rp.RazaTemplate).WithMany(rt => rt.Razas).HasForeignKey(rp => rp.RazaTemplate_ID).HasConstraintName("FK_RazPerTemplate");
+                entity.HasOne(rp => rp.Subraza).WithOne(sr => sr.RazaPersonaje).HasForeignKey<SubrazaPersonaje>(sr => sr.RazaPersonaje_ID).HasConstraintName("FK_SRP_Raza");
             });
-            modelBuilder.Entity<RazaTemplate>().ToTable("RazaTemplate");
+
+            modelBuilder.Entity<SubrazaPersonaje>(entity =>
+            {
+                entity.ToTable("SubrazaPersonaje");
+                entity.Property(e => e.Nombre).HasMaxLength(100);
+                entity.HasOne(sr => sr.SubrazaTemplate).WithMany().HasForeignKey(sr => sr.SubrazaTemplate_ID).HasConstraintName("FK_SRP_Template");
+            });
+
+            // Raza/Subraza Template
+            modelBuilder.Entity<RazaTemplate>(entity =>
+            {
+                entity.ToTable("RazaTemplate");
+
+                entity.HasMany(rt => rt.Subrazas).WithOne(st => st.RazaTemplate).HasForeignKey(st => st.RazaTemplate_ID).HasConstraintName("FK_Subraza_Raza");
+            });
+
+            modelBuilder.Entity<SubrazaTemplate>(entity =>
+            {
+                entity.ToTable("SubrazaTemplate");
+
+                entity.Property(e => e.Nombre).HasMaxLength(100);
+            });
 
             //Dados
             modelBuilder.Entity<Dado>(entity =>
@@ -101,9 +140,7 @@ namespace DnD_Helper_Backend.Data
                     e.Personaje_ID,
                     e.Habilidad_ID
                 });
-
                 entity.HasOne(s => s.Personaje).WithMany(p => p.ScoresPersonaje).HasForeignKey(s => s.Personaje_ID);
-
                 entity.HasOne(s => s.Habilidad).WithMany(h => h.ScoresPersonaje).HasForeignKey(s => s.Habilidad_ID);
             });
 
@@ -112,7 +149,6 @@ namespace DnD_Helper_Backend.Data
                 entity.ToTable("Habilidad");
 
                 entity.Property(e => e.Nombre).HasMaxLength(20);
-
                 entity.Property(e => e.NombreCorto).HasMaxLength(3);
             });
 
@@ -120,7 +156,6 @@ namespace DnD_Helper_Backend.Data
             modelBuilder.Entity<SkillTemplate>(entity =>
             {
                 entity.ToTable("SkillTemplate");
-
                 entity.HasOne(s => s.Habilidad).WithMany(h => h.SkillTemplates).HasForeignKey(s => s.Habilidad_ID).HasConstraintName("FK_SkillTemplate_Habilidad");
             });
             modelBuilder.Entity<SkillCustom>(entity =>
@@ -128,9 +163,7 @@ namespace DnD_Helper_Backend.Data
                 entity.ToTable("SkillCustom");
 
                 entity.HasOne(s => s.Personaje).WithMany(p => p.SkillCustoms).HasForeignKey(s => s.Personaje_ID);
-
                 entity.HasOne(s => s.Habilidad).WithMany(h => h.SkillCustoms).HasForeignKey(s => s.Habilidad_ID);
-
                 entity.HasIndex(e => new
                 {
                     e.Personaje_ID,
@@ -142,11 +175,8 @@ namespace DnD_Helper_Backend.Data
                 entity.ToTable("SkillPersonaje");
 
                 entity.HasOne(sp => sp.Personaje).WithMany(p => p.SkillsPersonaje).HasForeignKey(sp => sp.Personaje_ID);
-
                 entity.HasOne(sp => sp.SkillTemplate).WithMany(st => st.SkillPersonajes).HasForeignKey(sp => sp.SkillTemplate_ID);
-
                 entity.HasOne(sp => sp.SkillCustom).WithMany(sc => sc.SkillPersonajes).HasForeignKey(sp => sp.SkillCustom_ID);
-
                 entity.ToTable(t =>
                     t.HasCheckConstraint(
                         "CK_SkillPersonaje_OneSource",@"(([skillTemplate_ID] IS NOT NULL AND [skillCustom_ID] IS NULL)
